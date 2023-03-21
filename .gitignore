@@ -42,3 +42,5 @@ Temp/*
 Assets/Plugins/FluentCeVIO*
 Assets/Plugins.meta
 Assets/StreamingAssets/FluentCeVIOWrapper.Server*
+releases/*
+VRM_AI_v*_fork/*
