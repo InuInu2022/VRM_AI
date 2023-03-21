@@ -136,9 +136,11 @@ public class UImanager : MonoBehaviour
         if (talking & SystemSetting.Responce_display == "true")
         {
             BG_responce.SetActive(true);
+            Voice_responce.enabled = true;
             return;
         }
-        Voice_responce.text = "";
+        //Voice_responce.text = "";
+        Voice_responce.enabled = false;
         BG_responce.SetActive(false);
     }
     public void Update()
