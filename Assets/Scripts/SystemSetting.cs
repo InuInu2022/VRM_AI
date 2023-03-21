@@ -25,11 +25,10 @@ public class SystemSetting : MonoBehaviour
     public int COEIROINK_narrator;
 
     public string Seika_Voice_exe;
-    public string AssistantSeika_exe;
+    public string AssistantSeika_path;
     public string Seikactl_exe;
     public string SeikaSay2_exe;
-    string AssistantSeika_narrator_string;
-    public int AssistantSeika_narrator;
+    public string AssistantSeika_narrator;
     public string AudioDevice;
 
     //(optional) cevio installed path
@@ -83,11 +82,10 @@ public class SystemSetting : MonoBehaviour
         CeVIO_product = ini.ReadValue("AI_Voice", "CeVIO_product", "CeVIO_AI");
 
         Seika_Voice_exe = ini.ReadValue("AssistantSeika", "Seika_Voice_exe", "");
-        AssistantSeika_exe = ini.ReadValue("AssistantSeika", "AssistantSeika_exe", "");
+        AssistantSeika_path = ini.ReadValue("AssistantSeika", "AssistantSeika_path", "");
         Seikactl_exe = ini.ReadValue("AssistantSeika", "Seikactl_exe", "");
         SeikaSay2_exe = ini.ReadValue("AssistantSeika", "SeikaSay2_exe", "");
-        AssistantSeika_narrator_string = ini.ReadValue("AssistantSeika", "AssistantSeika_narrator", "");
-        AssistantSeika_narrator = int.Parse(AssistantSeika_narrator_string);
+        AssistantSeika_narrator = ini.ReadValue("AssistantSeika", "AssistantSeika_narrator", "");
         AudioDevice = ini.ReadValue("AssistantSeika", "AudioDevice", "");
 
 		VoiceEmotes = ReadValueAsList(ini,"VoiceEmotion", "Emotes", "");
@@ -137,7 +135,7 @@ public class SystemSetting : MonoBehaviour
     {
 		return ReadValueAsList(ini, SectionName, Key, DefaultValue, Separator)
             .Select(v =>{
-                UnityEngine.Debug.Log($"tuple v: {v.Trim()}");
+                //UnityEngine.Debug.Log($"tuple v: {v.Trim()}");
                 if(string.IsNullOrEmpty(v)){
 					return new();
 				}else{
