@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UniVRM10;
 
@@ -62,14 +63,18 @@ public class LoadModel : MonoBehaviour
             {
                 VoicePeak VoicePeak = go.AddComponent<VoicePeak>();
             }
-            if (SystemSetting.VoiceApp == "COEIROINK")
+            else if (SystemSetting.VoiceApp == "COEIROINK")
             {
                 COEIROINK COEIROINK = go.AddComponent<COEIROINK>();
             }
-            if (SystemSetting.VoiceApp == "AssistantSeika")
+            else if (SystemSetting.VoiceApp == "AssistantSeika")
             {
                 SeikaTalk SeikaTalk = go.AddComponent<SeikaTalk>();
             }
+            else if (Regex.IsMatch(SystemSetting.VoiceApp, "CeVIO", RegexOptions.IgnoreCase))
+            {
+				go.AddComponent<CeVIO>();
+			}
         }
     }
 }

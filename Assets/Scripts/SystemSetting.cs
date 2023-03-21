@@ -1,4 +1,7 @@
+using System.Collections.ObjectModel;
 using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
 
 //iniファイルを読み取るスクリプト。Advanced INI Parser前提
 public class SystemSetting : MonoBehaviour
@@ -29,7 +32,16 @@ public class SystemSetting : MonoBehaviour
     public int AssistantSeika_narrator;
     public string AudioDevice;
 
-    public string background;
+    //(optional) cevio installed path
+	public string CeVIO_exe;
+	public string CeVIO_narrator;
+	public string CeVIO_product;
+
+	public List<string> VoiceEmotes;
+	public List<List<(string, double)>> VoiceEmoteWeights;
+	public List<List<(string, double)>> VoiceEmoteOptions;
+
+	public string background;
     public string backgroundColor;
     public string backgroundImage;
     public string Responce_display;
@@ -66,6 +78,9 @@ public class SystemSetting : MonoBehaviour
         COEIROINK_exe = ini.ReadValue("AI_Voice", "COEIROINK_exe", "");
         COEIROINK_narrator_string = ini.ReadValue("AI_Voice", "COEIROINK_narrator", "");
         COEIROINK_narrator = int.Parse(COEIROINK_narrator_string);
+        CeVIO_exe = ini.ReadValue("AI_Voice", "CeVIO_exe", "");
+        CeVIO_narrator = ini.ReadValue("AI_Voice", "CeVIO_narrator", "");
+        CeVIO_product = ini.ReadValue("AI_Voice", "CeVIO_product", "CeVIO_AI");
 
         Seika_Voice_exe = ini.ReadValue("AssistantSeika", "Seika_Voice_exe", "");
         AssistantSeika_exe = ini.ReadValue("AssistantSeika", "AssistantSeika_exe", "");
@@ -75,7 +90,11 @@ public class SystemSetting : MonoBehaviour
         AssistantSeika_narrator = int.Parse(AssistantSeika_narrator_string);
         AudioDevice = ini.ReadValue("AssistantSeika", "AudioDevice", "");
 
-        background = ini.ReadValue("Other", "BackGround", "");
+		VoiceEmotes = ReadValueAsList(ini,"VoiceEmotion", "Emotes", "");
+		VoiceEmoteWeights = ReadValueAsTupleList(ini,"VoiceEmotion", "Emotes_weight");
+        VoiceEmoteOptions = ReadValueAsTupleList(ini,"VoiceEmotion", "Emotes_option");
+
+		background = ini.ReadValue("Other", "BackGround", "");
         Responce_display = ini.ReadValue("Other", "Responce_display", "");
         Responce_frame = ini.ReadValue("Other", "Responce_frame", "");
         frame_border_string = ini.ReadValue("Other", "frame_border", "");
@@ -88,6 +107,52 @@ public class SystemSetting : MonoBehaviour
         port = int.Parse(port_string);
         ini.Close();
     }
+
+    private List<string> ReadValueAsList(
+        INIParser ini,
+        string SectionName,
+        string Key,
+        string DefaultValue = "",
+        string Separator = "|"
+    )
+    {
+		return ini.ReadValue(SectionName, Key, DefaultValue)
+			.Split(Separator)
+			.Select(v =>
+			{
+				//UnityEngine.Debug.Log($"v: {v.Trim()}");
+				return v.Trim();
+			})
+			.ToList()
+            ;
+	}
+
+    private List<List<(string, double)>> ReadValueAsTupleList(
+        INIParser ini,
+        string SectionName,
+        string Key,
+        string DefaultValue = "",
+        string Separator = "|"
+    )
+    {
+		return ReadValueAsList(ini, SectionName, Key, DefaultValue, Separator)
+            .Select(v =>{
+                UnityEngine.Debug.Log($"tuple v: {v.Trim()}");
+                if(string.IsNullOrEmpty(v)){
+					return new();
+				}else{
+                    return v.Split(",")
+                    .Select(x => {
+                        var a = x.Split(":");
+                        return (a[0], double.Parse(a[1]));
+                    })
+                    .ToList()
+                    ;
+                }
+			})
+            .ToList()
+		    ;
+	}
 
     private void OnApplicationQuit()
     {

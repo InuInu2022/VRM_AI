@@ -35,4 +35,10 @@ Assets/Example-StandAloneWin_Scripts.meta
 Assets/Example-StandAloneWin_Scripts
 Assets/UniRx.meta
 Assets/UniRx
+config.dev.ini
+config.ini
+config.ini
 Temp/*
+Assets/Plugins/FluentCeVIO*
+Assets/Plugins.meta
+Assets/StreamingAssets/FluentCeVIOWrapper.Server*

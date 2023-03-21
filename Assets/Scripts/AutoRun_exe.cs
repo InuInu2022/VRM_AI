@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using System.Diagnostics;
 using UnityEngine;
 using System.Threading.Tasks;
@@ -13,8 +14,9 @@ public class AutoRun_exe : MonoBehaviour
     Process Seika_Voice;
     Process AssistantSeika;
     Process Seikactl;
+	Process exProcess;
 
-    void Start()
+	void Start()
     {
         if (SystemSetting.InputMode != "script")
         {
@@ -33,6 +35,10 @@ public class AutoRun_exe : MonoBehaviour
         {
             AssistantSeika_RUN();
         }
+        else if(Regex.IsMatch(SystemSetting.VoiceApp, "CeVIO", RegexOptions.IgnoreCase))
+        {
+			CeVIO_RUN();
+		}
     }
     public void OpenAI_API_RUN()
     {
@@ -72,15 +78,39 @@ public class AutoRun_exe : MonoBehaviour
         Invoke("Seikactl_RUN", 3);
     }
 
-    public void Seikactl_RUN()
+	public void Seikactl_RUN()
+	{
+		Seikactl = new Process();
+		Seikactl.StartInfo.FileName = SystemSetting.Seikactl_exe;
+		Seikactl.StartInfo.Arguments = " prodscan";
+		Seikactl.Start();
+	}
+
+	public void CeVIO_RUN()
     {
-        Seikactl = new Process();
-        Seikactl.StartInfo.FileName = SystemSetting.Seikactl_exe;
-        Seikactl.StartInfo.Arguments = " prodscan";
-        Seikactl.Start();
+        //server
+        var assets = Application.dataPath;
+        var server = "StreamingAssets/FluentCeVIOWrapper.Server/FluentCeVIOWrapper.Server.exe";
+        var path = System.IO.Path.Combine(assets, server);
+        var param = string.IsNullOrEmpty(SystemSetting.CeVIO_exe)
+            ? ""
+            : $"-dllPath {System.IO.Path.GetDirectoryName(SystemSetting.CeVIO_exe)}";
+		var args = $"-cevio {SystemSetting.CeVIO_product}" + param;
+
+
+		var psi = new ProcessStartInfo()
+        {
+            FileName = path,
+            Arguments = args,
+            //サーバーのコンソールを出さない設定は以下2行が必要
+            CreateNoWindow = false,//true,
+            UseShellExecute = true,//false
+        };
+        exProcess = Process.Start(psi);
+        //await Task.Delay(500);
     }
 
-    private void OnApplicationQuit()
+	private void OnApplicationQuit()
     {
         var _ = AppExit();
     }
@@ -107,6 +137,12 @@ public class AutoRun_exe : MonoBehaviour
             if (AssistantSeika != null)
             {
                 AssistantSeika.CloseMainWindow();
+            }
+
+            if (exProcess is not null)
+            {
+                exProcess.Kill();
+                UnityEngine.Debug.Log("FluentCeVIO server finished.");
             }
 
             //名前で指定してkill
