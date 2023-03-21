@@ -108,8 +108,14 @@ public class CeVIO : MonoBehaviour
 
     private async Task AwakeAsync()
     {
-        //lib
-        fcw = await FluentCeVIO.FactoryAsync();
+		//lib
+		var p = product switch
+		{
+			"CeVIO_AI" => Product.CeVIO_AI,
+			_ => Product.CeVIO_CS
+		};
+		UnityEngine.Debug.Log($"product: {product}, p: {p}");
+		fcw = await FluentCeVIO.FactoryAsync(product:p);
         var _ = await fcw.StartAsync();
 		await fcw.SetCastAsync(narrator);
 	}
