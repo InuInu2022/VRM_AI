@@ -109,10 +109,11 @@ public class CeVIO : MonoBehaviour
     private async Task AwakeAsync()
     {
 		//lib
-		var p = product switch
+		var p = product.Replace("\"","").Trim() switch
 		{
 			"CeVIO_AI" => Product.CeVIO_AI,
-			_ => Product.CeVIO_CS
+			"CeVIO_CS" => Product.CeVIO_CS,
+			_ => Product.CeVIO_AI
 		};
 		UnityEngine.Debug.Log($"product: {product}, p: {p}");
 		fcw = await FluentCeVIO.FactoryAsync(product:p);
