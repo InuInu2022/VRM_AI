@@ -175,6 +175,7 @@ public class CeVIO : MonoBehaviour
 		await fcw.CreateParam()
             .Components(current)
             .Alpha(50)
+			.Speed(50)
             .Tone(50)
             .ToneScale(50)
             .Volume(50)
